@@ -180,8 +180,9 @@ function renderStep() {
     next.disabled = s.required && !chosen.length;
   } else {
     const rows = STEPS.map(s => { const v = (sel[s.id] || []).map(id => MENU_INDEX[id].name).join(", "); return v ? `<div><span>${s.short}</span><b>${v}</b></div>` : ""; }).join("");
-    $("step").innerHTML = `<h2>Waffle'ın hazır 🎉</h2><p class="sub">Kontrol et, istersen çay ekle. Notunu sepette ekleyebilirsin.</p><div class="sum">${rows}<div><span>Waffle</span><b>${tl(waffleTotal(sel))}</b></div></div>
-      <div class="qty"><span>☕ Çay <small style="color:var(--muted)">(${tl(MENU.drinks[0].price)})</small></span><div class="st"><button id="tm">−</button><b id="tq">${teaQty}</b><button id="tp">+</button></div></div>`;
+    $("step").innerHTML = `<h2>Waffle'ın hazır 🎉</h2><p class="sub">Kontrol et, istersen çay ekle. Notunu sepette ekleyebilirsin.</p>
+      <div class="qty"><span>☕ Yanına çay? <small style="color:var(--muted)">(${tl(MENU.drinks[0].price)})</small></span><div class="st"><button id="tm">−</button><b id="tq">${teaQty}</b><button id="tp">+</button></div></div>
+      <div class="sum">${rows}<div><span>Waffle</span><b>${tl(waffleTotal(sel))}</b></div></div>`;
     $("tm").onclick = () => { teaQty = Math.max(0, teaQty - 1); $("tq").textContent = teaQty; };
     $("tp").onclick = () => { teaQty++; $("tq").textContent = teaQty; };
     next.textContent = "Sepete ekle"; next.disabled = false;
@@ -259,7 +260,8 @@ $("aBill").onclick = () => { if (!Store.sessionOrders(TABLE).length) return toas
 function openSheet(id) { $("bg").classList.add("on"); $(id).classList.add("on"); }
 function closeSheets() { $("bg").classList.remove("on"); document.querySelectorAll(".sheet").forEach(s => s.classList.remove("on")); }
 $("bg").onclick = closeSheets; document.querySelectorAll("[data-close]").forEach(b => b.onclick = closeSheets);
-$("startBtn").onclick = () => $("welcome").classList.remove("on");
+$("startBtn").onclick = () => { $("welcome").classList.remove("on"); try { sessionStorage.setItem("wf_hosgeldin_" + TABLE, "1"); } catch (_) {} };
+try { if (valid && sessionStorage.getItem("wf_hosgeldin_" + TABLE)) $("welcome").classList.remove("on"); } catch (_) {}
 function showHome() { $("builder").hidden = true; $("home").hidden = false; $("fab").style.display = ""; updCartBtn(); }
 function openBuilder(h) { sel = {}; prevSel = {}; cur = 0; if (h && Store.isAvailable(h)) { sel.hamur = [h]; cur = 1; }
   $("home").hidden = true; $("builder").hidden = false; $("fab").style.display = "none"; $("cartbar").classList.remove("on"); draw(); renderStep(); }

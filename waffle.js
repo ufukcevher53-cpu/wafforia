@@ -84,7 +84,7 @@
     const h = (sel.hamur || [])[0];
     const plate = `<ellipse cx="200" cy="372" rx="160" ry="16" fill="#000" opacity=".22"/><circle cx="200" cy="205" r="182" fill="url(#plate)"/><circle cx="200" cy="205" r="160" fill="none" stroke="#e9e3da" stroke-width="2"/>`;
     const defsBase = `<radialGradient id="plate" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ece6dc"/></radialGradient><linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient>`;
-    if (!h) return `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><defs>${defsBase}</defs>${plate}<text x="200" y="212" text-anchor="middle" font-size="18" font-family="inherit" fill="#b7a993">Hamurunu seç</text></svg>`;
+    if (!h) return uniq(`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><defs>${defsBase}</defs>${plate}<text x="200" y="212" text-anchor="middle" font-size="18" font-family="inherit" fill="#b7a993">Hamurunu seç</text></svg>`);
     const b = base(h, MENU_INDEX[h].color);
     let g = layer("l-base", isNew("hamur", h), b.body);
     (sel.cikolata || []).forEach((id, i) => g += layer("l", isNew("cikolata", id), choc(id, i, h)));
@@ -93,6 +93,9 @@
     (sel.sekerleme || []).forEach(id => g += layer("l", isNew("sekerleme", id), candies(MENU_INDEX[id], h)));
     (sel.susleme || []).forEach(id => g += layer("l", isNew("susleme", id), sprinkles(MENU_INDEX[id], h)));
     (sel.dondurma || []).forEach((id, i) => g += layer("l", isNew("dondurma", id), scoop(id, i)));
-    return `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><defs>${defsBase}${b.defs}</defs>${plate}${g}</svg>`;
+    return uniq(`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><defs>${defsBase}${b.defs}</defs>${plate}${g}</svg>`);
   };
+  /* Her SVG kendi kimliklerini kullansın: aynı sayfadaki gizli küçük resimlerle çakışırsa desen/kırpma görünmez. */
+  let svgN = 0;
+  function uniq(svg) { const p = "w" + (++svgN) + "_"; return svg.replace(/id="([^"]+)"/g, (m, i) => `id="${p}${i}"`).replace(/url\(#([^)]+)\)/g, (m, i) => `url(#${p}${i})`); }
 })();
