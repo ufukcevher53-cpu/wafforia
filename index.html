@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">
+<title>Wafforia · Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}body{font-family:Nunito,system-ui,sans-serif;background:#1d2b2a;color:#fff;height:100vh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;flex-wrap:wrap}
+header b{font-size:18px;font-weight:900}header small{opacity:.75;font-weight:700}
+select,button{font:inherit;font-weight:800;border-radius:10px;border:0;padding:7px 10px}
+.tabs{display:none;gap:6px;margin-left:auto}.tabs button{background:rgba(255,255,255,.12);color:#fff}.tabs button.on{background:#f2b632;color:#2b2104}
+main{flex:1;display:grid;grid-template-columns:420px 1fr;gap:16px;padding:0 16px 16px;min-height:0}
+.phone{background:#0e1615;border-radius:42px;padding:14px;box-shadow:0 20px 60px rgba(0,0,0,.5);display:flex;flex-direction:column;min-height:0}
+.phone iframe{flex:1;border:0;border-radius:30px;background:#fff;width:100%}
+.lbl{font-size:12px;font-weight:900;opacity:.7;text-transform:uppercase;letter-spacing:.08em;margin:4px 6px 8px}
+.desk{display:flex;flex-direction:column;min-height:0}.desk iframe{flex:1;border:0;border-radius:14px;background:#fff;width:100%}
+@media(max-width:900px){main{grid-template-columns:1fr}.tabs{display:flex}.desk{display:none}body.k .desk{display:flex}body.k .phone{display:none}.phone{border-radius:0;padding:0;background:none;box-shadow:none}.phone iframe{border-radius:12px}}
+</style></head><body>
+<header><div><b>Wafforia · Canlı demo</b><br><small>Solda müşterinin telefonu, sağda kasadaki ekran. Sipariş verin, kasaya nasıl düştüğünü görün.</small></div>
+<label style="margin-left:12px;font-weight:800;font-size:14px">Masa: <select id="t"></select></label>
+<div class="tabs"><button class="on" data-v="m">📱 Müşteri</button><button data-v="k">💻 Kasa</button></div></header>
+<main><section class="phone"><div class="lbl">📱 Müşteri telefonu</div><iframe id="m" title="Müşteri ekranı"></iframe></section>
+<section class="desk"><div class="lbl">💻 Kasa ekranı</div><iframe id="k" src="kasa.html" title="Kasa ekranı"></iframe></section></main>
+<script src="menu.js"></script>
+<script>
+const t=document.getElementById("t"); t.innerHTML=MENU.tables.map(x=>`<option value="${x.id}">${x.name}</option>`).join(""); t.value="B3";
+const set=()=>document.getElementById("m").src="menu.html?masa="+t.value; t.onchange=set; set();
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b));document.body.classList.toggle("k",b.dataset.v==="k");});
+</script></body></html>

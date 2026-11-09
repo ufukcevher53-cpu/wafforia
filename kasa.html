@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Wafforia · Kasa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#0b8a87;--teal-d:#06625f;--teal-l:#e6f5f4;--cream:#f7f3ec;--ink:#22302f;--muted:#71807e;--line:#e1e7e6;--gold:#f2b632;--red:#d6453d;--orange:#e8730c;--green:#2f9e44}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Nunito,system-ui,sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+header{background:var(--teal);color:#fff;display:flex;align-items:center;gap:14px;padding:10px 18px;position:sticky;top:0;z-index:5;flex-wrap:wrap}
+.logo{width:40px;height:40px;border-radius:50%;background:#fff;color:var(--teal);display:grid;place-items:center;font-weight:900;font-size:19px;border:3px solid var(--gold)}
+.brand b{display:block;font-weight:900;font-size:19px;line-height:1}.brand small{font-size:12px;opacity:.85;font-weight:700}
+.live{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);padding:5px 10px;border-radius:99px;font-size:13px;font-weight:800}
+.dot{width:9px;height:9px;border-radius:50%;background:#7CFC9A;animation:pl 1.6s infinite}@keyframes pl{50%{opacity:.35}}
+.tabs{display:flex;gap:4px;background:rgba(255,255,255,.12);padding:4px;border-radius:12px}
+.tab{padding:7px 14px;border-radius:9px;font-weight:800;font-size:14px}.tab.on{background:#fff;color:var(--teal-d)}
+.stat{margin-left:auto;text-align:right}.stat b{display:block;font-size:20px;font-weight:900}.stat span{font-size:11px;opacity:.85;font-weight:800;text-transform:uppercase}
+.hb{background:rgba(255,255,255,.15);padding:8px 12px;border-radius:10px;font-weight:800;font-size:13px}
+/* uyarılar */
+#alerts{display:flex;flex-direction:column;gap:8px;padding:12px 18px 0}
+.al{display:flex;align-items:center;gap:12px;border-radius:14px;padding:10px 14px;font-weight:800;animation:sl .3s}
+@keyframes sl{from{transform:translateY(-6px);opacity:0}}
+.al.onay{background:#fff3cd;border:2px solid #f2c94c;animation:sl .3s,al 1.2s ease-in-out infinite}
+@keyframes al{50%{box-shadow:0 0 0 5px rgba(242,182,50,.45)}}.al.waiter{background:#e6f5f4;border:2px solid var(--teal)}.al.extra{background:#eef6ff;border:2px solid #4c8bf5;animation:sl .3s,al2 1.2s ease-in-out infinite}
+@keyframes al2{50%{box-shadow:0 0 0 5px rgba(76,139,245,.35)}}.al.bill{background:#ffe9dc;border:2px solid var(--orange)}
+.al .ic{font-size:22px}.al .tx{flex:1}.al .tx small{display:block;font-weight:700;color:var(--muted)}
+.ab{padding:8px 14px;border-radius:10px;font-weight:900;font-size:14px;background:var(--ink);color:#fff}.ab.ok{background:var(--green)}.ab.no{background:#fff;color:var(--red);border:2px solid #f3c2bf}
+/* yerleşim */
+main{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(340px,1fr);gap:16px;padding:14px 18px 30px}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px}
+.sec{font-size:13px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:4px 2px 10px}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.tb{border:2px solid var(--line);border-radius:16px;padding:12px 10px;text-align:left;background:#fafcfc;position:relative;min-height:104px;display:flex;flex-direction:column;gap:4px}
+.tb .nm{font-weight:900;font-size:17px}.tb .st{font-size:12px;font-weight:800;color:var(--muted)}.tb .am{margin-top:auto;font-weight:900;font-size:16px}
+.tb.acik{border-color:var(--teal);background:var(--teal-l)}.tb.acik .st{color:var(--teal-d)}
+.tb.onay{border-color:#f2c94c;background:#fff8e0}.tb.onay .st{color:#8a6200}
+.tb.sel{box-shadow:0 0 0 3px var(--ink)}
+.tb .icons{position:absolute;top:8px;right:8px;display:flex;gap:2px;font-size:16px}
+.tb.blink{animation:bl 1s ease 3}@keyframes bl{50%{box-shadow:0 0 0 6px rgba(242,182,50,.55)}}
+/* detay */
+.det h2{font-size:24px;font-weight:900}.det .meta{color:var(--muted);font-weight:700;font-size:13px;margin:2px 0 12px}
+.ord{border:2px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.ord .t{display:flex;justify-content:space-between;align-items:center;font-weight:900}
+.ord p{font-size:13.5px;font-weight:700;margin-top:4px}.ord p small{color:var(--muted)}
+.ord .bs{display:flex;gap:6px;margin-top:8px}.sb{padding:7px 10px;border-radius:9px;font-weight:900;font-size:13px;background:var(--teal-l);color:var(--teal-d)}
+.badge{font-size:11px;font-weight:900;padding:3px 8px;border-radius:99px;margin-left:6px}
+.b-onay{background:#fff3cd;color:#8a6200}.b-yeni{background:#ffe9dc;color:var(--orange)}.b-hazirlaniyor{background:#fff3cd;color:#8a6200}.b-teslim{background:#e8f6ea;color:var(--green)}.b-red{background:#fde8e7;color:var(--red)}
+.src{font-size:11px;font-weight:800;color:var(--muted)}
+.tot{display:flex;justify-content:space-between;font-weight:900;font-size:20px;padding:10px 2px}
+.row{display:flex;gap:8px}.big{flex:1;padding:13px;border-radius:12px;font-weight:900;font-size:15px;background:var(--teal);color:#fff}.big.sec2{background:#fff;color:var(--ink);border:2px solid var(--line)}.big.dark{background:var(--ink)}
+.empty{color:var(--muted);font-weight:700;text-align:center;padding:30px 10px}
+.q{display:flex;flex-direction:column;gap:8px}
+.qi{display:flex;gap:10px;align-items:center;border:2px solid var(--line);border-radius:12px;padding:8px 10px}
+.qi .m{background:var(--teal);color:#fff;font-weight:900;border-radius:10px;padding:6px 9px;min-width:44px;text-align:center}
+.qi .d{flex:1;font-size:13px;font-weight:700}.qi .d b{font-size:14px}
+/* malzeme */
+#ingView{padding:14px 18px 30px;display:none}
+.ingc{margin-bottom:16px}.ings{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.ing{display:flex;align-items:center;justify-content:space-between;gap:8px;border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;font-weight:800;font-size:14px}
+.ing.off{background:#fdf2f1;border-color:#f3c2bf;color:#9b3a34}
+.sw{width:46px;height:26px;border-radius:99px;background:var(--green);position:relative;flex:none;transition:.2s}
+.sw::after{content:"";position:absolute;top:3px;left:23px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.ing.off .sw{background:#cfd6d5}.ing.off .sw::after{left:3px}
+/* modal */
+.mbg{position:fixed;inset:0;background:rgba(20,30,29,.5);display:none;place-items:center;z-index:20;padding:16px}.mbg.on{display:grid}
+.modal{background:#fff;border-radius:20px;padding:20px;width:100%;max-width:440px;max-height:90vh;overflow:auto}
+.modal h3{font-size:22px;font-weight:900;margin-bottom:12px}
+.fi{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;font-weight:800;font-size:13px;color:var(--muted)}
+.fi select,.fi input{font:inherit;font-weight:800;color:var(--ink);border:2px solid var(--line);border-radius:12px;padding:10px 12px}
+.receipt{font-family:ui-monospace,Menlo,monospace;background:#fbf8f1;border:1px dashed #b9ae9f;padding:14px;font-size:13px;line-height:1.5;margin-bottom:12px}
+.receipt .c{text-align:center}.receipt hr{border:0;border-top:1px dashed #b9ae9f;margin:8px 0}.receipt .r{display:flex;justify-content:space-between;gap:8px}
+.start{position:fixed;inset:0;background:var(--teal);display:grid;place-items:center;z-index:50;color:#fff;text-align:center}
+.start div{max-width:380px;padding:20px}.start h1{font-size:30px;font-weight:900;margin:14px 0 6px}.start p{font-weight:700;opacity:.9;margin-bottom:18px}
+.start .logo{margin:0 auto;width:70px;height:70px;font-size:32px}
+.start .big{background:var(--gold);color:#2b2104;width:100%}
+.demo{background:#fff8e0;border-bottom:2px solid #f2c94c;padding:8px 18px;font-size:13px;font-weight:800;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.demo a{color:var(--teal-d);font-weight:900;text-decoration:none;background:#fff;border:1px solid #f2c94c;padding:3px 8px;border-radius:8px}
+body{overflow-x:hidden}
+@media(max-width:640px){
+  header{gap:8px;padding:8px 10px}.brand small{display:none}.live{display:none}
+  .tabs{order:5;width:100%;justify-content:stretch}.tab{flex:1;text-align:center}
+  .stat b{font-size:17px}.stat span{font-size:10px}.hb{padding:7px 9px;font-size:12px}
+  .demo{padding:6px 10px;font-size:12px}
+  #alerts{padding:10px 10px 0}.al{flex-wrap:wrap;gap:8px;padding:10px}.al .tx{flex:1 1 calc(100% - 40px)}.al .ab{flex:1}
+  main{padding:10px;gap:10px}.card{padding:10px}
+  .grid{grid-template-columns:repeat(3,1fr);gap:7px}
+  .tb{min-height:86px;padding:9px 8px}.tb .nm{font-size:15px}.tb .am{font-size:14px}
+  .det h2{font-size:21px}#ingView{padding:10px}.ings{grid-template-columns:1fr 1fr}
+  .ing{font-size:13px;padding:9px}
+}
+.card{min-width:0}main>*{min-width:0}
+</style>
+</head>
+<body>
+<div class="start" id="start"><div><div class="logo">W</div><h1>Kasa Ekranı</h1><p>Sipariş, garson ve hesap bildirimleri için sesi açmak üzere bir kez dokunun. Onay bekleyen sipariş ya da garson çağrısı olduğu sürece alarm çalmaya devam eder. Mesai boyunca bu sayfayı açık bırakın.</p><button class="big" id="startBtn">🔔 Başlat</button></div></div>
+
+<header>
+  <div class="logo">W</div><div class="brand"><b>WAFFORIA</b><small>Kasa Ekranı</small></div>
+  <div class="live"><span class="dot"></span>Canlı</div>
+  <div class="tabs"><button class="tab on" data-v="tables">Masalar</button><button class="tab" data-v="ing">Malzemeler</button></div>
+  <div class="stat"><b id="rev">0 ₺</b><span>Bugünkü ciro</span></div>
+  <button class="hb" id="snd">🔔 Ses açık</button>
+</header>
+<div class="demo">DEMO · Müşteri ekranını açmak için masa seçin:<span id="demoLinks"></span><button class="hb" style="background:#fff;color:var(--red);border:1px solid #f3c2bf" id="reset">Demoyu sıfırla</button></div>
+
+<div id="tablesView">
+  <div id="alerts"></div>
+  <main>
+    <section class="card">
+      <div class="sec">Bahçe</div><div class="grid" id="gB"></div>
+      <div class="sec">İç salon</div><div class="grid" id="gI"></div>
+      <div class="sec">Mutfak sırası</div><div class="q" id="queue"></div>
+    </section>
+    <section class="card det" id="det"></section>
+  </main>
+</div>
+<div id="ingView"></div>
+
+<div class="mbg" id="mAdd"><div class="modal"><h3 id="mAddT">Masaya ürün ekle</h3>
+  <div class="fi">Ürün<select id="aType"><option value="cay">☕ Çay</option><option value="waffle">🧇 Waffle (hamur seç)</option><option value="diger">✏️ Diğer (isim ve fiyat yaz)</option></select></div>
+  <div class="fi" id="fH" style="display:none">Hamur<select id="aHamur"></select></div>
+  <div class="fi" id="fD" style="display:none">Açıklama<input id="aDesc" placeholder="ör. muz, çilek, sütlü çikolata"></div>
+  <div class="fi" id="fN" style="display:none">Ürün adı<input id="aName" placeholder="ör. Su"></div>
+  <div class="fi" id="fP" style="display:none">Fiyat (₺)<input id="aPrice" type="number" min="0" placeholder="0"></div>
+  <div class="fi">Adet<input id="aQty" type="number" min="1" value="1"></div>
+  <div class="row"><button class="big sec2" data-mclose>Vazgeç</button><button class="big" id="aOk">Ekle</button></div></div></div>
+<div class="mbg" id="mClose"><div class="modal"><h3>Hesabı kapat</h3><div id="rc"></div>
+  <div class="row"><button class="big sec2" data-mclose>Vazgeç</button><button class="big dark" id="cOk">Hesabı kapat</button></div></div></div>
+
+<script src="menu.js"></script><script src="store.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+let selT = null, soundOn = true, actx = null, seen = null;
+const ST = { onay: "Onay bekliyor", yeni: "Yeni", hazirlaniyor: "Hazırlanıyor", teslim: "Teslim edildi", red: "Reddedildi" };
+const TS = { kapali: "Boş", onay: "Onay bekliyor", acik: "Açık" };
+const ago = iso => { const m = Math.floor((Date.now() - new Date(iso)) / 60000); return m < 1 ? "şimdi" : m + " dk önce"; };
+const hm = iso => new Date(iso).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+
+function beep(kind) { if (!soundOn || !actx) return; if (actx.state === "suspended") actx.resume(); const t0 = actx.currentTime; const f = kind === "waiter" ? [988, 988] : kind === "bill" ? [660, 880] : [880, 880, 1175];
+  f.forEach((fr, i) => { const o = actx.createOscillator(), g = actx.createGain(); o.frequency.value = fr; g.gain.setValueAtTime(.0001, t0 + i * .25); g.gain.exponentialRampToValueAtTime(.45, t0 + i * .25 + .02); g.gain.exponentialRampToValueAtTime(.0001, t0 + i * .25 + .22); o.connect(g).connect(actx.destination); o.start(t0 + i * .25); o.stop(t0 + i * .25 + .24); }); }
+
+function signals(m) { // yeni olayları yakala → ses + yanıp sönme
+  const sig = { onay: new Set(), yeni: new Set(), waiter: new Set(), bill: new Set() };
+  Object.values(m.orders).forEach(o => { if (o.status === "onay") sig.onay.add(o.id); if (o.status === "yeni" && o.source === "qr") sig.yeni.add(o.id); });
+  Object.values(m.tables).forEach(t => { if (t.waiter) sig.waiter.add(t.id + t.waiter); if (t.bill) sig.bill.add(t.id + t.bill); });
+  if (seen) { const n = k => [...sig[k]].some(x => !seen[k].has(x));
+    if (n("onay") || n("yeni")) beep("order"); else if (n("waiter")) beep("waiter"); else if (n("bill")) beep("bill");
+    if (n("onay") || n("yeni") || n("waiter") || n("bill")) blinkTitle(); }
+  seen = sig;
+}
+let bt; function blinkTitle() { clearInterval(bt); let k = 0; bt = setInterval(() => { document.title = k % 2 ? "Wafforia · Kasa" : "🔔 YENİ BİLDİRİM"; if (++k > 12 || document.hasFocus()) { clearInterval(bt); document.title = "Wafforia · Kasa"; } }, 700); }
+
+function render(m) {
+  $("rev").textContent = tl(Store.todayRevenue());
+  // uyarılar
+  let al = "";
+  Object.values(m.tables).forEach(t => {
+    const nm = tableName(t.id);
+    if (t.status === "onay") { const os = Store.sessionOrders(t.id).filter(o => o.status === "onay"); const sum = os.reduce((a, o) => a + o.total, 0);
+      al += `<div class="al onay"><span class="ic">⏳</span><div class="tx">${nm} · yeni masa siparişi (${tl(sum)})<small>${os.map(o => o.items.map(i => `${i.type === "waffle" ? "🧇" : "☕"} ${i.name}${i.qty > 1 ? " × " + i.qty : ""}`).join(", ") + (o.note ? " · 📝 " + o.note : "")).join(" | ")}<br>Masada müşteri varsa onaylayın. Dışarıdan geldiyse reddedin.</small></div><button class="ab ok" data-ap="${t.id}">Onayla</button><button class="ab no" data-rj="${t.id}">Reddet</button></div>`; }
+    if (t.waiter) al += `<div class="al waiter"><span class="ic">🔔</span><div class="tx">${nm} garson çağırıyor<small>${ago(t.waiter)}</small></div><button class="ab" data-cw="${t.id}">Gidiyorum</button></div>`;
+    if (t.bill) al += `<div class="al bill"><span class="ic">🧾</span><div class="tx">${nm} hesap istiyor · ${tl(Store.sessionTotal(t.id))}<small>${ago(t.bill)}</small></div><button class="ab" data-ob="${t.id}">Hesabı aç</button></div>`;
+  });
+  Store.unseenOrders().forEach(o => {
+    al += `<div class="al extra"><span class="ic">🆕</span><div class="tx">${tableName(o.tableId)} · ek sipariş #${o.no} (${tl(o.total)})<small>${o.items.map(i => `${i.type === "waffle" ? "🧇" : "☕"} ${i.name}${i.qty > 1 ? " × " + i.qty : ""}`).join(", ")}${o.note ? " · 📝 " + o.note : ""}</small></div><button class="ab ok" data-ns="${o.id}">Hazırlanıyor →</button><button class="ab no" style="color:var(--ink)" data-ack="${o.id}">Gördüm</button></div>`; });
+  $("alerts").innerHTML = al;
+  // masalar
+  const card = t => { const tt = m.tables[t.id]; const os = Store.sessionOrders(t.id).filter(o => o.status !== "red");
+    return `<button class="tb ${tt.status}${selT === t.id ? " sel" : ""}" data-t="${t.id}"><span class="icons">${Store.unseenOrders().some(o => o.tableId === t.id) ? "🆕" : ""}${tt.waiter ? "🔔" : ""}${tt.bill ? "🧾" : ""}</span><span class="nm">${t.name}</span><span class="st">${TS[tt.status]}${os.length ? " · " + os.length + " sipariş" : ""}</span><span class="am">${tt.status === "kapali" ? "—" : tl(Store.sessionTotal(t.id))}</span></button>`; };
+  $("gB").innerHTML = MENU.tables.filter(t => t.id[0] === "B").map(card).join("");
+  $("gI").innerHTML = MENU.tables.filter(t => t.id[0] === "I").map(card).join("");
+  // mutfak sırası
+  const q = Object.values(m.orders).filter(o => o.status === "yeni" || o.status === "hazirlaniyor").sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  $("queue").innerHTML = q.length ? q.map(o => `<div class="qi"><span class="m">${o.tableId}</span><div class="d"><b>#${o.no}</b> <span class="badge b-${o.status}">${ST[o.status]}</span> · ${hm(o.createdAt)}<br>${o.items.map(i => `${i.type === "waffle" ? "🧇" : "☕"} ${i.name}${i.qty > 1 ? "×" + i.qty : ""}`).join(", ")}${o.note ? `<br><b style="color:#a35b00">📝 ${o.note}</b>` : ""}</div><button class="sb" data-ns="${o.id}">${o.status === "yeni" ? "Hazırlanıyor →" : "Teslim ✓"}</button></div>`).join("") : `<p class="empty">Bekleyen sipariş yok</p>`;
+  renderDet(m); signals(m);
+}
+
+function renderDet(m) {
+  if (!selT) { $("det").innerHTML = `<p class="empty">Detay için soldan bir masa seçin.</p>`; return; }
+  const t = m.tables[selT]; const s = Store.session(selT); const os = Store.sessionOrders(selT);
+  $("det").innerHTML = `<h2>${tableName(selT)}</h2><p class="meta">${TS[t.status]}${s ? " · açılış " + hm(s.openedAt) : ""}</p>`
+    + (t.status === "onay" ? `<div class="row" style="margin-bottom:10px"><button class="big" data-ap="${selT}">✓ Masayı onayla</button><button class="big sec2" style="color:var(--red)" data-rj="${selT}">Reddet</button></div>` : "")
+    + (os.length ? os.map(o => `<div class="ord"><div class="t"><span>#${o.no} <span class="badge b-${o.status}">${ST[o.status]}</span> <span class="src">${o.source === "kasa" ? "kasadan" : "QR"} · ${hm(o.createdAt)}</span></span><span>${tl(o.total)}</span></div>`
+      + o.items.map(i => `<p>${i.type === "waffle" ? "🧇" : i.type === "icecek" ? "☕" : "•"} ${i.name}${i.qty > 1 ? " × " + i.qty : ""} <small>${i.desc || ""}</small></p>`).join("")
+      + (o.note ? `<p>📝 ${o.note}</p>` : "")
+      + (o.status === "yeni" ? `<div class="bs"><button class="sb" data-ns="${o.id}">Hazırlanıyor →</button></div>` : o.status === "hazirlaniyor" ? `<div class="bs"><button class="sb" data-ns="${o.id}">Teslim edildi ✓</button></div>` : "")
+      + `</div>`).join("") : `<p class="empty">Bu masada açık hesap yok.</p>`)
+    + `<div class="tot"><span>Masa toplamı</span><span>${tl(Store.sessionTotal(selT))}</span></div>`
+    + `<div class="row"><button class="big sec2" id="addBtn">+ Ürün ekle</button>${s ? `<button class="big dark" data-ob="${selT}">Hesabı kapat</button>` : ""}</div>`;
+  $("addBtn").onclick = openAdd;
+}
+
+/* olaylar */
+document.addEventListener("click", e => {
+  const d = e.target.closest("[data-t],[data-ap],[data-rj],[data-cw],[data-ob],[data-ns],[data-ack],[data-mclose]"); if (!d) return;
+  if (d.dataset.ack) { Store.ackOrder(d.dataset.ack); return; }
+  if (d.dataset.t) { selT = d.dataset.t; render(Store.get()); if (innerWidth < 900) $("det").scrollIntoView({ behavior: "smooth", block: "start" }); }
+  else if (d.dataset.ap) { Store.approveTable(d.dataset.ap); selT = d.dataset.ap; }
+  else if (d.dataset.rj) { if (confirmBox("Bu siparişi reddetmek istediğinize emin misiniz?")) Store.rejectTable(d.dataset.rj); }
+  else if (d.dataset.cw) Store.clearCall(d.dataset.cw, "waiter");
+  else if (d.dataset.ob) { selT = d.dataset.ob; openClose(); }
+  else if (d.dataset.ns) { const o = Store.get().orders[d.dataset.ns]; Store.setOrderStatus(o.id, o.status === "yeni" ? "hazirlaniyor" : "teslim"); }
+  else if (d.hasAttribute("data-mclose")) document.querySelectorAll(".mbg").forEach(x => x.classList.remove("on"));
+});
+function confirmBox() { return true; } // canlı sürümde onay penceresi
+
+/* ürün ekle */
+$("aHamur").innerHTML = MENU.steps[0].items.map(i => `<option value="${i.id}">${i.name} — ${tl(i.price)}</option>`).join("");
+$("aType").onchange = () => { const v = $("aType").value; $("fH").style.display = $("fD").style.display = v === "waffle" ? "" : "none"; $("fN").style.display = $("fP").style.display = v === "diger" ? "" : "none"; };
+function openAdd() { $("mAddT").textContent = tableName(selT) + " · ürün ekle"; $("aType").value = "cay"; $("aType").onchange(); $("aQty").value = 1; $("aDesc").value = $("aName").value = $("aPrice").value = ""; $("mAdd").classList.add("on"); }
+$("aOk").onclick = () => {
+  const v = $("aType").value, qty = Math.max(1, +$("aQty").value || 1); let it;
+  if (v === "cay") it = { type: "icecek", name: "Çay", price: MENU.drinks[0].price, qty };
+  else if (v === "waffle") { const h = MENU_INDEX[$("aHamur").value]; it = { type: "waffle", name: h.name, price: h.price, qty, desc: $("aDesc").value.trim() }; }
+  else { const n = $("aName").value.trim(); if (!n) return; it = { type: "diger", name: n, price: Math.max(0, +$("aPrice").value || 0), qty }; }
+  Store.addManual(selT, [it]); $("mAdd").classList.remove("on");
+};
+
+/* hesabı kapat */
+function openClose() {
+  const os = Store.sessionOrders(selT).filter(o => o.status !== "red"); const lines = {};
+  os.forEach(o => o.items.forEach(i => { const k = i.name + "|" + i.price + "|" + (i.desc || ""); lines[k] = lines[k] || { ...i, qty: 0 }; lines[k].qty += i.qty || 1; }));
+  $("rc").innerHTML = `<div class="receipt"><div class="c"><b>WAFFORIA</b><br>${tableName(selT)} · ${new Date().toLocaleString("tr-TR")}</div><hr>`
+    + Object.values(lines).map(l => `<div class="r"><span>${l.qty} × ${l.name}</span><span>${tl(l.price * l.qty)}</span></div>${l.desc ? `<div style="font-size:11px;color:#777">  ${l.desc}</div>` : ""}`).join("")
+    + `<hr><div class="r"><b>TOPLAM</b><b>${tl(Store.sessionTotal(selT))}</b></div><hr><div class="c" style="font-size:11px">Mali değeri yoktur, bilgi amaçlıdır.</div></div>`;
+  $("mClose").classList.add("on");
+}
+$("cOk").onclick = () => { Store.closeTable(selT); $("mClose").classList.remove("on"); };
+
+/* malzemeler */
+function renderIng(m) {
+  $("ingView").innerHTML = `<p class="sec" style="margin-bottom:14px">Kapattığınız malzeme müşteri menüsünde "Bugün yok" olarak görünür ve seçilemez.</p>`
+    + MENU.steps.map(s => `<div class="ingc"><div class="sec">${s.short}</div><div class="ings">${s.items.map(i => `<button class="ing${m.unavailable[i.id] ? " off" : ""}" data-ing="${i.id}"><span>${i.name}${i.seasonal ? " 🍂" : ""}</span><span class="sw"></span></button>`).join("")}</div></div>`).join("");
+}
+$("ingView").addEventListener("click", e => { const b = e.target.closest("[data-ing]"); if (b) Store.toggleAvailable(b.dataset.ing); });
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => { document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t)); $("tablesView").style.display = t.dataset.v === "tables" ? "" : "none"; $("ingView").style.display = t.dataset.v === "ing" ? "block" : "none"; });
+
+$("snd").onclick = () => { soundOn = !soundOn; $("snd").textContent = soundOn ? "🔔 Ses açık" : "🔕 Ses kapalı"; if (soundOn) beep("order"); };
+$("startBtn").onclick = () => { try { actx = new (window.AudioContext || window.webkitAudioContext)(); beep("order"); } catch (_) {} $("start").style.display = "none"; };
+if (window.top !== window) document.querySelector(".demo").firstChild.textContent = "DEMO · ";
+$("demoLinks").innerHTML = window.top !== window ? "" : MENU.tables.map(t => `<a href="menu.html?masa=${t.id}" target="_blank">${t.id}</a>`).join(" ");
+$("reset").onclick = () => { Store.resetDemo(); selT = null; };
+Store.subscribe(m => { render(m); renderIng(m); });
+/* Onay, garson ya da hesap bekleyen masa oldukça alarm her 4 sn'de tekrar çalar (personel ilgilenene kadar). */
+setInterval(() => { const m = Store.get(); const ts = Object.values(m.tables);
+  if (ts.some(t => t.status === "onay") || Store.unseenOrders().length) beep("order"); else if (ts.some(t => t.waiter)) beep("waiter"); else if (ts.some(t => t.bill)) beep("bill"); }, 4000);
+document.addEventListener("click", () => { if (actx && actx.state === "suspended") actx.resume(); }, true);
+setInterval(() => render(Store.get()), 30000);
+</script>
+</body>
+</html>
