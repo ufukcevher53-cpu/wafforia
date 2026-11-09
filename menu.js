@@ -14,12 +14,12 @@ window.MENU = {
       { id: "bubble",  name: "Bubble Waffle",  price: 390, color: "#DDA862" },
       { id: "bruksel", name: "Brüksel Waffle", price: 350, color: "#D29A4E" }
     ]},
-    { id: "cikolata", title: "Çikolatanı seç", short: "Çikolata", max: 2, items: [
+    { id: "cikolata", title: "Çikolatanı seç", short: "Çikolata", max: 3, items: [
       { id: "c-sutlu",  name: "Sütlü",  color: "#7B4A2A" },
       { id: "c-beyaz",  name: "Beyaz",  color: "#F3E7D3" },
       { id: "c-bitter", name: "Bitter", color: "#3E2416" }
     ]},
-    { id: "meyve", title: "Meyvelerini ekle", short: "Meyve", max: 4, items: [
+    { id: "meyve", title: "Meyvelerini ekle", short: "Meyve", max: 6, items: [
       { id: "muz",    name: "Muz",    color: "#F4E3A1", shape: "slice" },
       { id: "cilek",  name: "Çilek",  color: "#D8293A", shape: "berry" },
       { id: "kivi",   name: "Kivi",   color: "#7FB23A", shape: "slice" },
@@ -27,7 +27,7 @@ window.MENU = {
       { id: "seftali",name: "Şeftali", color: "#F4A15A", shape: "wedge", seasonal: true },
       { id: "orman",  name: "Orman Meyvesi", color: "#4B1F4F", shape: "dot", seasonal: true }
     ]},
-    { id: "susleme", title: "Süslemelerini seç", short: "Süsleme", max: 4, note: "Süslemeler ücretsiz", items: [
+    { id: "susleme", title: "Süslemelerini seç", short: "Süsleme", max: 8, note: "Süslemeler ücretsiz", items: [
       { id: "s-sade-krep",   name: "Sade Krep Kırığı", color: "#E8C27E" },
       { id: "s-yaban-krep",  name: "Yaban Mersinli Krep Kırığı", color: "#5B5FA8" },
       { id: "s-limon-krep",  name: "Limonlu Krep Kırığı", color: "#F1E06B" },

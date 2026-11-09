@@ -49,6 +49,9 @@
   const layer = (cls, isNew, inner) => `<g class="${cls}${isNew ? " pop" : ""}" style="transform-origin:${C.x}px ${C.y}px">${inner}</g>`;
 
   function choc(id, i, h) { const c = MENU_INDEX[id].color;
+    if (i >= 2) { // üçüncü çikolata: üstte ince çizgi şeklinde gezdirme
+      const lines = [-60, -20, 20, 60].map((o, k) => `<path d="M70 ${C.y + o} q35 ${k % 2 ? -22 : 22} 70 0 t70 0 t70 0 t70 0" fill="none" stroke="${c}" stroke-width="9" stroke-linecap="round"/>`).join("");
+      return `<g clip-path="url(#wc)" opacity=".95">${lines}</g>`; }
     const d = i === 0 ? `M60 60 L340 60 L340 ${C.y - 10} Q300 ${C.y + 30} 260 ${C.y - 5} Q220 ${C.y + 35} 180 ${C.y} Q140 ${C.y + 35} 100 ${C.y + 5} Q70 ${C.y + 30} 60 ${C.y} Z`
                       : `M60 ${C.y + 30} Q100 ${C.y + 60} 140 ${C.y + 30} Q180 ${C.y + 65} 220 ${C.y + 32} Q260 ${C.y + 62} 300 ${C.y + 30} Q330 ${C.y + 50} 340 ${C.y + 30} L340 360 L60 360 Z`;
     return `<g clip-path="url(#wc)"><path d="${d}" fill="${c}" opacity=".93"/><path d="${d}" fill="url(#gloss)" opacity=".35"/></g>`; }
