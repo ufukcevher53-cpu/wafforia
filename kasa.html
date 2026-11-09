@@ -96,6 +96,8 @@ body{overflow-x:hidden}
   .ing{font-size:13px;padding:9px}
 }
 .card{min-width:0}main>*{min-width:0}
+html[data-sync=off] .dot{background:#ff8a80;animation:none}
+.demo button.q{background:#fff;border:1px solid #f2c94c;color:var(--teal-d);font-weight:900;padding:3px 8px;border-radius:8px;font-size:13px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -103,12 +105,12 @@ body{overflow-x:hidden}
 
 <header>
   <div class="logo">W</div><div class="brand"><b>WAFFORIA</b><small>Kasa Ekranı</small></div>
-  <div class="live"><span class="dot"></span>Canlı</div>
+  <div class="live" id="live"><span class="dot"></span><span id="liveT">Bağlanıyor…</span></div>
   <div class="tabs"><button class="tab on" data-v="tables">Masalar</button><button class="tab" data-v="ing">Malzemeler</button></div>
   <div class="stat"><b id="rev">0 ₺</b><span>Bugünkü ciro</span></div>
   <button class="hb" id="snd">🔔 Ses açık</button>
 </header>
-<div class="demo">DEMO · Müşteri ekranını açmak için masa seçin:<span id="demoLinks"></span><button class="hb" style="background:#fff;color:var(--red);border:1px solid #f3c2bf" id="reset">Demoyu sıfırla</button></div>
+<div class="demo">DEMO · Telefonla denemek için masa seç, QR'ı okut:<span id="demoLinks"></span><button class="hb" style="background:#fff;color:var(--red);border:1px solid #f3c2bf" id="reset">Demoyu sıfırla</button></div>
 
 <div id="tablesView">
   <div id="alerts"></div>
@@ -134,7 +136,7 @@ body{overflow-x:hidden}
 <div class="mbg" id="mClose"><div class="modal"><h3>Hesabı kapat</h3><div id="rc"></div>
   <div class="row"><button class="big sec2" data-mclose>Vazgeç</button><button class="big dark" id="cOk">Hesabı kapat</button></div></div></div>
 
-<script src="menu.js"></script><script src="store.js"></script>
+<script src="menu.js"></script><script src="store.js"></script><script src="qr.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 let selT = null, soundOn = true, actx = null, seen = null;
@@ -245,7 +247,10 @@ document.querySelectorAll(".tab").forEach(t => t.onclick = () => { document.quer
 $("snd").onclick = () => { soundOn = !soundOn; $("snd").textContent = soundOn ? "🔔 Ses açık" : "🔕 Ses kapalı"; if (soundOn) beep("order"); };
 $("startBtn").onclick = () => { try { actx = new (window.AudioContext || window.webkitAudioContext)(); beep("order"); } catch (_) {} $("start").style.display = "none"; };
 if (window.top !== window) document.querySelector(".demo").firstChild.textContent = "DEMO · ";
-$("demoLinks").innerHTML = window.top !== window ? "" : MENU.tables.map(t => `<a href="menu.html?masa=${t.id}" target="_blank">${t.id}</a>`).join(" ");
+$("demoLinks").innerHTML = window.top !== window ? "" : MENU.tables.map(t => `<button class="q" data-qr="${t.id}">${t.id}</button>`).join(" ");
+$("demoLinks").addEventListener("click", e => { const b = e.target.closest("[data-qr]"); if (b) showTableQR(b.dataset.qr, tableName(b.dataset.qr)); });
+function syncBadge() { const on = Store.isOnline(); $("liveT").textContent = on ? "Canlı" : "Bağlantı yok"; $("live").title = on ? "Telefonlardan gelen siparişler anında düşer" : "İnternet bağlantısını kontrol edin"; }
+setInterval(syncBadge, 1000);
 $("reset").onclick = () => { Store.resetDemo(); selT = null; };
 Store.subscribe(m => { render(m); renderIng(m); });
 /* Onay, garson ya da hesap bekleyen masa oldukça alarm her 4 sn'de tekrar çalar (personel ilgilenene kadar). */
