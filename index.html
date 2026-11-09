@@ -21,7 +21,7 @@ main{flex:1;display:grid;grid-template-columns:420px 1fr;gap:16px;padding:0 16px
 <div class="tabs"><button class="on" data-v="m">📱 Müşteri</button><button data-v="k">💻 Kasa</button></div></header>
 <main><section class="phone"><div class="lbl">📱 Müşteri telefonu</div><iframe id="m" title="Müşteri ekranı"></iframe></section>
 <section class="desk"><div class="lbl">💻 Kasa ekranı</div><iframe id="k" src="kasa.html" title="Kasa ekranı"></iframe></section></main>
-<script src="menu.js"></script><script src="qr.js"></script>
+<script src="menu.js?v=11091528"></script><script src="qr.js?v=11091528"></script>
 <script>
 const t=document.getElementById("t"); t.innerHTML=MENU.tables.map(x=>`<option value="${x.id}">${x.name}</option>`).join(""); t.value="B3";
 document.getElementById("qrB").onclick=()=>showTableQR(t.value, MENU.tables.find(x=>x.id===t.value).name);
