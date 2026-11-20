@@ -81,22 +81,68 @@
   function scoop(id, i) { const c = MENU_INDEX[id].color; const x = C.x + (i ? 34 : -22), y = C.y - 8 + (i ? 14 : 0);
     return `<ellipse cx="${x}" cy="${y + 26}" rx="34" ry="9" fill="#000" opacity=".18"/><path d="M${x - 38} ${y + 10} q8 14 18 4 q10 14 20 2 q10 14 20 2 q8 12 18 -4 a38 36 0 1 0 -76 -4z" fill="${c}"/><circle cx="${x - 12}" cy="${y - 14}" r="9" fill="#fff" opacity=".35"/>`; }
 
+  /* ---- Gerçek görsel katmanları (img/w/*.webp). Görseli olmayan malzeme eski çizimle kalır. ---- */
+  const IMG = window.WIMG || {};
+  const P = "img/w/";
+  const BOXES = { cicek: 292, bubble: 296, bruksel: 284 }; // hamurun en uzun kenarı (viewBox 400 içinde)
+  function place(key, scale) { const d = IMG[key]; const w = d[0] * scale, h = d[1] * scale;
+    return { x: C.x - w / 2, y: C.y - h / 2, w, h }; }
+  const im = (key, b, extra = "") => `<image href="${P}${key}.webp" x="${b.x.toFixed(1)}" y="${b.y.toFixed(1)}" width="${b.w.toFixed(1)}" height="${b.h.toFixed(1)}" ${extra}/>`;
+  function realBase(h, chocs) {
+    const d = IMG["hamur_" + h]; const sc = (BOXES[h] || 290) / Math.max(d[0], d[1]); const b = place("hamur_" + h, sc);
+    const mk = `<mask id="wm" maskUnits="userSpaceOnUse" x="0" y="0" width="400" height="400"><image href="${P}mask_${h}.png" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}"/></mask>`;
+    const sh = `<ellipse cx="${C.x + 6}" cy="${C.y + 12}" rx="${b.w / 2}" ry="${b.h / 2}" fill="#000" opacity=".22" filter="url(#blur8)"/>`;
+    let body = sh;
+    const cs = chocs.filter(c => IMG[`k_${h}_${c.replace("c-", "")}`]);
+    if (!cs.length) body += im("hamur_" + h, b);
+    else {
+      const n = cs.length;
+      cs.forEach((c, i) => { const key = `k_${h}_${c.replace("c-", "")}`; const kb = place(key, sc);
+        if (n === 1) { body += im(key, kb); return; }
+        const x0 = b.x + b.w * i / n, x1 = b.x + b.w * (i + 1) / n;
+        body += `<clipPath id="cc${i}"><rect x="${i ? x0 : 0}" y="0" width="${i === n - 1 ? 400 : x1 - (i ? x0 : 0)}" height="400"/></clipPath>` + im(key, kb, `clip-path="url(#cc${i})"`); });
+    }
+    return { mk, body, b };
+  }
+  function realFruit(it, h) { const key = "m_" + it.id; if (!IMG[key]) return fruit(it, h);
+    const d = IMG[key]; const n = it.id === "orman" ? 4 : 5; const sz = it.id === "orman" ? 54 : it.id === "seftali" ? 60 : 50;
+    return pts(it.id, n, h, 22).map(([x, y, a]) => { const w = sz, hh = sz * d[1] / d[0];
+      return `<g transform="rotate(${a.toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})"><image href="${P}${key}.webp" x="${(x - w / 2).toFixed(1)}" y="${(y - hh / 2).toFixed(1)}" width="${w}" height="${hh.toFixed(1)}" filter="url(#ds)"/></g>`; }).join(""); }
+  function realSauce(id, i) { const key = "o_" + id.replace("o-", ""); if (!IMG[key]) return sauce(id, i);
+    const rot = i ? 90 : 0; return `<g mask="url(#wm)"><image href="${P}${key}.webp" x="40" y="45" width="320" height="320" transform="rotate(${rot} 200 205)" filter="url(#ds2)"/></g>`; }
+  function realScoop(id, i) { const key = "d_" + id.replace("d-", ""); if (!IMG[key]) return scoop(id, i);
+    const d = IMG[key]; const w = 120, h = w * d[1] / d[0]; const x = C.x + (i ? 34 : -22) - w / 2, y = C.y - 8 + (i ? 14 : 0) - h / 2;
+    return `<image href="${P}${key}.webp" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w}" height="${h.toFixed(1)}" filter="url(#ds3)"/>`; }
+
   window.renderWaffle = function (sel, prev) {
     prev = prev || {};
     const isNew = (step, id) => !(prev[step] || []).includes(id);
     const h = (sel.hamur || [])[0];
     const plate = `<ellipse cx="200" cy="372" rx="160" ry="16" fill="#000" opacity=".22"/><circle cx="200" cy="205" r="182" fill="url(#plate)"/><circle cx="200" cy="205" r="160" fill="none" stroke="#e9e3da" stroke-width="2"/>`;
-    const defsBase = `<radialGradient id="plate" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ece6dc"/></radialGradient><linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient>`;
+    const fx = `<filter id="blur8" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="8"/></filter>
+      <filter id="ds" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="1.5" dy="3" stdDeviation="2" flood-opacity=".35"/></filter>
+      <filter id="ds2" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="1" dy="2" stdDeviation="1.2" flood-opacity=".3"/></filter>
+      <filter id="ds3" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="3" dy="6" stdDeviation="5" flood-opacity=".35"/></filter>`;
+    const defsBase = `<radialGradient id="plate" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ece6dc"/></radialGradient><linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient>` + fx;
     if (!h) return uniq(`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><defs>${defsBase}</defs>${plate}<text x="200" y="212" text-anchor="middle" font-size="18" font-family="inherit" fill="#b7a993">Hamurunu seç</text></svg>`);
-    const b = base(h, MENU_INDEX[h].color);
-    let g = layer("l-base", isNew("hamur", h), b.body);
-    (sel.cikolata || []).forEach((id, i) => g += layer("l", isNew("cikolata", id), choc(id, i, h)));
-    (sel.sos || []).forEach((id, i) => g += layer("l", isNew("sos", id), sauce(id, i)));
-    (sel.meyve || []).forEach(id => g += layer("l", isNew("meyve", id), fruit(MENU_INDEX[id], h)));
+    const real = !!IMG["hamur_" + h];
+    let g, defs = defsBase, cl = "";
+    if (real) {
+      const rb = realBase(h, sel.cikolata || []); defs += rb.mk;
+      const chocKey = (sel.cikolata || []).join(",") + "|" + h, prevKey = (prev.cikolata || []).join(",") + "|" + ((prev.hamur || [])[0] || "");
+      g = layer("l-base", chocKey !== prevKey, rb.body);
+      const b = base(h, MENU_INDEX[h].color); defs += b.defs; // eski kırpma şekli: süsleme noktaları için
+    } else {
+      const b = base(h, MENU_INDEX[h].color); defs += b.defs;
+      g = layer("l-base", isNew("hamur", h), b.body);
+      (sel.cikolata || []).forEach((id, i) => g += layer("l", isNew("cikolata", id), choc(id, i, h)));
+    }
+    (sel.meyve || []).forEach(id => g += layer("l", isNew("meyve", id), real ? realFruit(MENU_INDEX[id], h) : fruit(MENU_INDEX[id], h)));
     (sel.sekerleme || []).forEach(id => g += layer("l", isNew("sekerleme", id), candies(MENU_INDEX[id], h)));
     (sel.susleme || []).forEach(id => g += layer("l", isNew("susleme", id), sprinkles(MENU_INDEX[id], h)));
-    (sel.dondurma || []).forEach((id, i) => g += layer("l", isNew("dondurma", id), scoop(id, i)));
-    return uniq(`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><defs>${defsBase}${b.defs}</defs>${plate}${g}</svg>`);
+    (sel.sos || []).forEach((id, i) => g += layer("l", isNew("sos", id), real ? realSauce(id, i) : sauce(id, i)));
+    (sel.dondurma || []).forEach((id, i) => g += layer("l", isNew("dondurma", id), real ? realScoop(id, i) : scoop(id, i)));
+    return uniq(`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs>${defs}</defs>${plate}${g}</svg>`);
   };
   /* Her SVG kendi kimliklerini kullansın: aynı sayfadaki gizli küçük resimlerle çakışırsa desen/kırpma görünmez. */
   let svgN = 0;
