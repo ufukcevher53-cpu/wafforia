@@ -104,10 +104,42 @@
     }
     return { mk, body, b };
   }
-  function realFruit(it, h) { const key = "m_" + it.id; if (!IMG[key]) return fruit(it, h);
-    const d = IMG[key]; const n = it.id === "orman" ? 4 : 5; const sz = it.id === "orman" ? 54 : it.id === "seftali" ? 60 : 50;
-    return pts(it.id, n, h, 22).map(([x, y, a]) => { const w = sz, hh = sz * d[1] / d[0];
-      return `<g transform="rotate(${a.toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})"><image href="${P}${key}.webp" x="${(x - w / 2).toFixed(1)}" y="${(y - hh / 2).toFixed(1)}" width="${w}" height="${hh.toFixed(1)}" filter="url(#ds)"/></g>`; }).join(""); }
+  /* Meyveleri birlikte, waffle yüzeyine dengeli yayar: altın açı spirali + seçilen meyveler sırayla dağıtılır */
+  const SPREAD = { cicek: [118, 108], bubble: [122, 84], bruksel: [118, 80] };
+  function fruitLayout(ids, h) {
+    if (!ids.length) return {};
+    const per = ids.length === 1 ? 7 : ids.length === 2 ? 5 : ids.length === 3 ? 4 : 3;
+    const total = per * ids.length, [rx, ry] = SPREAD[h] || [115, 100], r = rng(hash(ids.join("|") + h));
+    const spots = []; const ga = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; spots.length < total && i < total * 4; i++) {
+      const k = (i + 0.5) / (total * 1.05), rad = Math.sqrt(k), t = i * ga + 0.6;
+      const x = C.x + Math.cos(t) * rad * rx + (r() - .5) * 8, y = C.y + Math.sin(t) * rad * ry + (r() - .5) * 8;
+      if (inside(h, x, y)) spots.push([x, y, r() * 360]);
+    }
+    const out = {}; ids.forEach(id => out[id] = []);
+    spots.forEach((p, i) => out[ids[i % ids.length]].push(p));
+    return out;
+  }
+  const BERRY = ["m_orman_yaban", "m_orman_ahududu", "m_orman_bogurtlen"];
+  function realFruit(it, h, spots) { let key = "m_" + it.id; if (!IMG[key]) return fruit(it, h);
+    const sz = it.id === "seftali" ? 58 : it.id === "ananas" ? 50 : 48;
+    return spots.map(([x, y, a], i) => { let k = key, s = sz;
+      if (it.id === "orman" && IMG[BERRY[0]]) { k = BERRY[i % 3]; s = k === "m_orman_yaban" ? 26 : 32; }
+      const d = IMG[k]; const w = s, hh = s * d[1] / d[0];
+      return `<g transform="rotate(${a.toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})"><image href="${P}${k}.webp" x="${(x - w / 2).toFixed(1)}" y="${(y - hh / 2).toFixed(1)}" width="${w}" height="${hh.toFixed(1)}" filter="url(#ds)"/></g>`; }).join(""); }
+  /* Süsleme/şekerleme: waffle şekline maskelenmiş gerçek serpme katmanı; renk çeşitleri ayrı (boyanmış) görsellerdir */
+  const TOP = { "s-sade-krep": "s_krep", "s-yaban-krep": "s_krep_yaban", "s-limon-krep": "s_krep_limon", "s-kakao-krep": "s_krep_kakao",
+    "s-findik": "s_findik", "s-yerfistigi": "s_yerfistigi", "s-antep": "s_antep", "s-badem": "s_badem",
+    "s-beyaz-damla": "s_damla", "s-sutlu-damla": "s_damla_sutlu", "s-bitter-damla": "s_damla_bitter", "s-frambuaz-damla": "s_damla_frambuaz",
+    "s-beyaz-pirinc": "s_pirinc", "s-sutlu-pirinc": "s_pirinc_sutlu", "s-bitter-pirinc": "s_pirinc_bitter", "s-frambuaz-pirinc": "s_pirinc_frambuaz",
+    "s-bonibon": "s_bonibon", "s-cakil": "s_cakil", "s-hindistan": "s_hindistan", "s-pasta-susu": "s_pasta", "s-kakaolu-biskuvi": "s_kakaolu",
+    "s-biscoff": "s_biscoff", "s-gokkusagi": "s_gokkusagi", "s-jelibon": "s_jelibon",
+    "k-kestane": "k_kestane", "k-sari-kiraz": "k_sari_kiraz", "k-kirmizi-kiraz": "k_kirmizi_kiraz", "k-visne": "k_visne", "k-portakal": "k_portakal",
+    "k-incir": "k_incir", "k-tutti": "k_tutti", "k-kuru": "k_kuru" };
+  window.WTOP = TOP;
+  function realTopping(id, fallback) { const key = TOP[id]; if (!key || !IMG[key]) return fallback();
+    const rot = hash(id) % 360, sc = 0.9 + (hash(id + "s") % 20) / 100, w = 330 * sc;
+    return `<g mask="url(#wm)"><image href="${P}${key}.webp" x="${(200 - w / 2).toFixed(1)}" y="${(205 - w / 2).toFixed(1)}" width="${w.toFixed(1)}" height="${w.toFixed(1)}" transform="rotate(${rot} 200 205)" filter="url(#ds2)"/></g>`; }
   function realSauce(id, i) { const key = "o_" + id.replace("o-", ""); if (!IMG[key]) return sauce(id, i);
     const rot = i ? 90 : 0; return `<g mask="url(#wm)"><image href="${P}${key}.webp" x="40" y="45" width="320" height="320" transform="rotate(${rot} 200 205)" filter="url(#ds2)"/></g>`; }
   function realScoop(id, i) { const key = "d_" + id.replace("d-", ""); if (!IMG[key]) return scoop(id, i);
@@ -137,9 +169,10 @@
       g = layer("l-base", isNew("hamur", h), b.body);
       (sel.cikolata || []).forEach((id, i) => g += layer("l", isNew("cikolata", id), choc(id, i, h)));
     }
-    (sel.meyve || []).forEach(id => g += layer("l", isNew("meyve", id), real ? realFruit(MENU_INDEX[id], h) : fruit(MENU_INDEX[id], h)));
-    (sel.sekerleme || []).forEach(id => g += layer("l", isNew("sekerleme", id), candies(MENU_INDEX[id], h)));
-    (sel.susleme || []).forEach(id => g += layer("l", isNew("susleme", id), sprinkles(MENU_INDEX[id], h)));
+    const FL = real ? fruitLayout(sel.meyve || [], h) : {};
+    (sel.meyve || []).forEach(id => g += layer("l", isNew("meyve", id), real ? realFruit(MENU_INDEX[id], h, FL[id]) : fruit(MENU_INDEX[id], h)));
+    (sel.sekerleme || []).forEach(id => g += layer("l", isNew("sekerleme", id), real ? realTopping(id, () => candies(MENU_INDEX[id], h)) : candies(MENU_INDEX[id], h)));
+    (sel.susleme || []).forEach(id => g += layer("l", isNew("susleme", id), real ? realTopping(id, () => sprinkles(MENU_INDEX[id], h)) : sprinkles(MENU_INDEX[id], h)));
     (sel.sos || []).forEach((id, i) => g += layer("l", isNew("sos", id), real ? realSauce(id, i) : sauce(id, i)));
     (sel.dondurma || []).forEach((id, i) => g += layer("l", isNew("dondurma", id), real ? realScoop(id, i) : scoop(id, i)));
     return uniq(`<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs>${defs}</defs>${plate}${g}</svg>`);

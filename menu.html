@@ -108,6 +108,7 @@ textarea{width:100%;border:2px solid var(--line);border-radius:14px;padding:10px
 .rev .go{margin-left:auto;background:var(--teal);color:#fff;font-weight:900;border-radius:10px;padding:8px 10px;font-size:13px;white-space:nowrap}
 .ov .rev{max-width:340px;width:100%;margin:8px auto 0;text-align:left}
 .foot{text-align:center;color:var(--muted);font-weight:700;font-size:12px;padding:10px 0 0}
+.nutri{margin-top:12px;border:1px solid #f0c38a;background:#fff8ee;border-radius:14px;padding:10px 14px}.nutri div{display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:14px}.nutri span{color:var(--muted);font-weight:700}.nutri b{text-align:right}.nutri p{margin:6px 0 0;font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -148,7 +149,7 @@ textarea{width:100%;border:2px solid var(--line);border-radius:14px;padding:10px
 <div class="ov" id="status"><div id="stIcon"></div><h1 id="stTitle"></h1><p id="stText"></p><button class="btn" id="stNew">Yeni waffle oluştur</button><button class="btn light" id="stMine">Masa hesabını gör</button><div id="revSt"></div></div>
 <div class="toast" id="toast"></div>
 
-<script src="menu.js?v=11091528"></script><script src="store.js?v=11091528"></script><script src="img/w/index.js?v=11201930"></script><script src="waffle.js?v=11201930"></script>
+<script src="menu.js?v=11091528"></script><script src="store.js?v=11091528"></script><script src="nutrition.js?v=1"></script><script src="img/w/index.js?v=11211955"></script><script src="waffle.js?v=11211955"></script>
 <script>
 const $ = id => document.getElementById(id);
 const P = new URLSearchParams(location.search);
@@ -166,9 +167,9 @@ function toast(m) { const t = $("toast"); t.textContent = m; t.classList.add("on
 function draw() { $("svg").innerHTML = renderWaffle(sel, prevSel); prevSel = JSON.parse(JSON.stringify(sel)); $("price").textContent = tl(waffleTotal(sel)); }
 function prog() { $("prog").innerHTML = Array.from({ length: N + 1 }, (_, i) => `<div class="${i < cur ? "done" : i === cur ? "cur" : ""}"></div>`).join(""); }
 function thumbKey(it) { const W = window.WIMG || {}; const st = MENU_INDEX[it.id].step; const id = it.id;
-  const k = st === "hamur" ? "hamur_" + id : st === "cikolata" ? "k_cicek_" + id.replace("c-", "") : st === "meyve" ? "m_" + id : st === "sos" ? "o_" + id.replace("o-", "") : st === "dondurma" ? "d_" + id.replace("d-", "") : null;
+  const k = st === "hamur" ? "hamur_" + id : st === "cikolata" ? "k_cicek_" + id.replace("c-", "") : st === "meyve" ? "m_" + id : st === "sos" ? "o_" + id.replace("o-", "") : st === "dondurma" ? "d_" + id.replace("d-", "") : (st === "susleme" || st === "sekerleme") && window.WTOP ? window.WTOP[id] : null;
   return k && W[k] ? k : null; }
-function swatch(it) { const k = thumbKey(it); if (k) return `<span class="sw ph${/^o_/.test(k) ? " sauce" : ""}"><img src="img/w/${k}.webp" alt="" loading="lazy"></span>`;
+function swatch(it) { const k = thumbKey(it); if (k) return `<span class="sw ph${/^(o_|s_|k_)/.test(k) ? " sauce" : ""}"><img src="img/w/${k}.webp" alt="" loading="lazy"></span>`;
   return `<span class="sw${it.color === "multi" ? " multi" : ""}" style="${it.color !== "multi" ? "background:" + it.color : ""}"></span>`; }
 
 function renderStep() {
@@ -188,7 +189,8 @@ function renderStep() {
     const rows = STEPS.map(s => { const v = (sel[s.id] || []).map(id => MENU_INDEX[id].name).join(", "); return v ? `<div><span>${s.short}</span><b>${v}</b></div>` : ""; }).join("");
     $("step").innerHTML = `<h2>Waffle'ın hazır 🎉</h2><p class="sub">Kontrol et, istersen çay ekle. Notunu sepette ekleyebilirsin.</p>
       <div class="qty"><span>☕ Yanına çay? <small style="color:var(--muted)">(${tl(MENU.drinks[0].price)})</small></span><div class="st"><button id="tm">−</button><b id="tq">${teaQty}</b><button id="tp">+</button></div></div>
-      <div class="sum">${rows}<div><span>Waffle</span><b>${tl(waffleTotal(sel))}</b></div></div>`;
+      <div class="sum">${rows}<div><span>Waffle</span><b>${tl(waffleTotal(sel))}</b></div></div>
+      ${(() => { const n = window.nutriOf ? nutriOf(sel) : null; if (!n) return ""; return `<div class="nutri"><div><span>Enerji</span><b>≈ ${n.kcal} kcal</b></div><div><span>Alerjenler</span><b>${n.al.length ? n.al.join(", ") : "Yok"}</b></div><p>Değerler yaklaşıktır. Alerjiniz varsa lütfen personele de bildirin.</p></div>`; })()}`;
     $("tm").onclick = () => { teaQty = Math.max(0, teaQty - 1); $("tq").textContent = teaQty; };
     $("tp").onclick = () => { teaQty++; $("tq").textContent = teaQty; };
     next.textContent = "Sepete ekle"; next.disabled = false;
