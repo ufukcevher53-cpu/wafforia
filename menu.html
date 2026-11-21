@@ -169,7 +169,7 @@ function prog() { $("prog").innerHTML = Array.from({ length: N + 1 }, (_, i) => 
 function thumbKey(it) { const W = window.WIMG || {}; const st = MENU_INDEX[it.id].step; const id = it.id;
   const k = st === "hamur" ? "hamur_" + id : st === "cikolata" ? "k_cicek_" + id.replace("c-", "") : st === "meyve" ? "m_" + id : st === "sos" ? "o_" + id.replace("o-", "") : st === "dondurma" ? "d_" + id.replace("d-", "") : (st === "susleme" || st === "sekerleme") && window.WTOP ? window.WTOP[id] : null;
   return k && W[k] ? k : null; }
-function swatch(it) { const k = thumbKey(it); if (k) return `<span class="sw ph${/^(o_|s_|k_)/.test(k) ? " sauce" : ""}"><img src="img/w/${k}.webp" alt="" loading="lazy"></span>`;
+function swatch(it) { const k = thumbKey(it); if (k) return `<span class="sw ph${/^(o_|s_)|^k_(?!cicek_|bubble_|bruksel_)/.test(k) ? " sauce" : ""}"><img src="img/w/${k}.webp" alt="" loading="lazy"></span>`;
   return `<span class="sw${it.color === "multi" ? " multi" : ""}" style="${it.color !== "multi" ? "background:" + it.color : ""}"></span>`; }
 
 function renderStep() {
