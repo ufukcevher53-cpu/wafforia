@@ -138,7 +138,7 @@ html[data-sync=off] .dot{background:#ff8a80;animation:none}
 <div class="mbg" id="mClose"><div class="modal"><h3>Hesabı kapat</h3><div id="rc"></div>
   <div class="row"><button class="big sec2" data-mclose>Vazgeç</button><button class="big dark" id="cOk">Hesabı kapat</button></div></div></div>
 
-<script src="menu.js?v=11091528"></script><script src="store.js?v=11091528"></script><script src="qr.js?v=11091528"></script>
+<script src="menu.js?v=11091528"></script><script src="store.js?v=11231330"></script><script src="qr.js?v=11091528"></script>
 <script>
 const $ = id => document.getElementById(id);
 let selT = null, soundOn = true, actx = null, seen = null;
@@ -168,12 +168,12 @@ function render(m) {
   Object.values(m.tables).forEach(t => {
     const nm = tableName(t.id);
     if (t.status === "onay") { const os = Store.sessionOrders(t.id).filter(o => o.status === "onay"); const sum = os.reduce((a, o) => a + o.total, 0);
-      al += `<div class="al onay"><span class="ic">⏳</span><div class="tx">${nm} · yeni masa siparişi (${tl(sum)})<small>${os.map(o => o.items.map(i => `${i.type === "waffle" ? "🧇" : "☕"} ${i.name}${i.qty > 1 ? " × " + i.qty : ""}`).join(", ") + (o.note ? " · 📝 " + o.note : "")).join(" | ")}<br>Masada müşteri varsa onaylayın. Dışarıdan geldiyse reddedin.</small></div><button class="ab ok" data-ap="${t.id}">Onayla</button><button class="ab no" data-rj="${t.id}">Reddet</button></div>`; }
+      al += `<div class="al onay"><span class="ic">⏳</span><div class="tx">${nm} · yeni masa siparişi (${tl(sum)})<small>${os.map(o => (o.name ? "👤 " + String(o.name).replace(/[<>&]/g,"") + ": " : "") + o.items.map(i => `${i.type === "waffle" ? "🧇" : "☕"} ${i.name}${i.qty > 1 ? " × " + i.qty : ""}`).join(", ") + (o.note ? " · 📝 " + o.note : "")).join(" | ")}<br>Masada müşteri varsa onaylayın. Dışarıdan geldiyse reddedin.</small></div><button class="ab ok" data-ap="${t.id}">Onayla</button><button class="ab no" data-rj="${t.id}">Reddet</button></div>`; }
     if (t.waiter) al += `<div class="al waiter"><span class="ic">🔔</span><div class="tx">${nm} garson çağırıyor<small>${ago(t.waiter)}</small></div><button class="ab" data-cw="${t.id}">Gidiyorum</button></div>`;
     if (t.bill) al += `<div class="al bill"><span class="ic">🧾</span><div class="tx">${nm} hesap istiyor · ${tl(Store.sessionTotal(t.id))}<small>${ago(t.bill)}</small></div><button class="ab" data-ob="${t.id}">Hesabı aç</button></div>`;
   });
   Store.unseenOrders().forEach(o => {
-    al += `<div class="al extra"><span class="ic">🆕</span><div class="tx">${tableName(o.tableId)} · ek sipariş #${o.no} (${tl(o.total)})<small>${o.items.map(i => `${i.type === "waffle" ? "🧇" : "☕"} ${i.name}${i.qty > 1 ? " × " + i.qty : ""}`).join(", ")}${o.note ? " · 📝 " + o.note : ""}</small></div><button class="ab ok" data-ns="${o.id}">Hazırlanıyor →</button><button class="ab no" style="color:var(--ink)" data-ack="${o.id}">Gördüm</button></div>`; });
+    al += `<div class="al extra"><span class="ic">🆕</span><div class="tx">${tableName(o.tableId)} · ek sipariş #${o.no} (${tl(o.total)})<small>${o.items.map(i => `${i.type === "waffle" ? "🧇" : "☕"} ${i.name}${i.qty > 1 ? " × " + i.qty : ""}`).join(", ")}${(o.name ? ` · 👤 ${String(o.name).replace(/[<>&]/g,"")}` : "")}${o.note ? " · 📝 " + o.note : ""}</small></div><button class="ab ok" data-ns="${o.id}">Hazırlanıyor →</button><button class="ab no" style="color:var(--ink)" data-ack="${o.id}">Gördüm</button></div>`; });
   $("alerts").innerHTML = al;
   // masalar
   const card = t => { const tt = m.tables[t.id]; const os = Store.sessionOrders(t.id).filter(o => o.status !== "red");
@@ -182,7 +182,7 @@ function render(m) {
   $("gI").innerHTML = MENU.tables.filter(t => t.id[0] === "I").map(card).join("");
   // mutfak sırası
   const q = Object.values(m.orders).filter(o => o.status === "yeni" || o.status === "hazirlaniyor").sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-  $("queue").innerHTML = q.length ? q.map(o => `<div class="qi"><span class="m">${o.tableId}</span><div class="d"><b>#${o.no}</b> <span class="badge b-${o.status}">${ST[o.status]}</span> · ${hm(o.createdAt)}<br>${o.items.map(i => `${i.type === "waffle" ? "🧇" : "☕"} ${i.name}${i.qty > 1 ? "×" + i.qty : ""}`).join(", ")}${o.note ? `<br><b style="color:#a35b00">📝 ${o.note}</b>` : ""}</div><button class="sb" data-ns="${o.id}">${o.status === "yeni" ? "Hazırlanıyor →" : "Teslim ✓"}</button></div>`).join("") : `<p class="empty">Bekleyen sipariş yok</p>`;
+  $("queue").innerHTML = q.length ? q.map(o => `<div class="qi"><span class="m">${o.tableId}</span><div class="d"><b>#${o.no}</b>${o.name ? ` <b style="color:#0F6B62">👤 ${String(o.name).replace(/[<>&]/g,"")}</b>` : ""} <span class="badge b-${o.status}">${ST[o.status]}</span> · ${hm(o.createdAt)}<br>${o.items.map(i => `${i.type === "waffle" ? "🧇" : "☕"} ${i.name}${i.qty > 1 ? "×" + i.qty : ""}`).join(", ")}${o.note ? `<br><b style="color:#a35b00">📝 ${o.note}</b>` : ""}</div><button class="sb" data-ns="${o.id}">${o.status === "yeni" ? "Hazırlanıyor →" : "Teslim ✓"}</button></div>`).join("") : `<p class="empty">Bekleyen sipariş yok</p>`;
   renderDet(m); signals(m);
 }
 
@@ -191,7 +191,7 @@ function renderDet(m) {
   const t = m.tables[selT]; const s = Store.session(selT); const os = Store.sessionOrders(selT);
   $("det").innerHTML = `<h2>${tableName(selT)}</h2><p class="meta">${TS[t.status]}${s ? " · açılış " + hm(s.openedAt) : ""}</p>`
     + (t.status === "onay" ? `<div class="row" style="margin-bottom:10px"><button class="big" data-ap="${selT}">✓ Masayı onayla</button><button class="big sec2" style="color:var(--red)" data-rj="${selT}">Reddet</button></div>` : "")
-    + (os.length ? os.map(o => `<div class="ord"><div class="t"><span>#${o.no} <span class="badge b-${o.status}">${ST[o.status]}</span> <span class="src">${o.source === "kasa" ? "kasadan" : "QR"} · ${hm(o.createdAt)}</span></span><span>${tl(o.total)}</span></div>`
+    + (os.length ? os.map(o => `<div class="ord"><div class="t"><span>#${o.no}${o.name ? ` · 👤 ${String(o.name).replace(/[<>&]/g,"")}` : ""} <span class="badge b-${o.status}">${ST[o.status]}</span> <span class="src">${o.source === "kasa" ? "kasadan" : "QR"} · ${hm(o.createdAt)}</span></span><span>${tl(o.total)}</span></div>`
       + o.items.map(i => `<p>${i.type === "waffle" ? "🧇" : i.type === "icecek" ? "☕" : "•"} ${i.name}${i.qty > 1 ? " × " + i.qty : ""} <small>${i.desc || ""}</small></p>`).join("")
       + (o.note ? `<p>📝 ${o.note}</p>` : "")
       + (o.status === "yeni" ? `<div class="bs"><button class="sb" data-ns="${o.id}">Hazırlanıyor →</button></div>` : o.status === "hazirlaniyor" ? `<div class="bs"><button class="sb" data-ns="${o.id}">Teslim edildi ✓</button></div>` : "")

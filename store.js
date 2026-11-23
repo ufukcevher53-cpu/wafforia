@@ -105,13 +105,13 @@
     isAvailable: id => !mem.unavailable[id],
 
     /* Müşteri (QR) siparişi. Boş masadan gelen ilk sipariş personel onayına düşer. */
-    placeOrder(tid, items, note) {
+    placeOrder(tid, items, note, name) {
       const oid = uid("o_"), sid = uid("s_"), at = now();
       tx(m => {
         const t = m.tables[tid]; let s = sessionOf(m, tid); let status = "yeni";
         if (!s) { s = openSession(m, tid, "qr", sid, at); t.status = "onay"; status = "onay"; }
         else if (t.status === "onay") status = "onay";
-        m.orders[oid] = { id: oid, no: ++m.seq, tableId: tid, sessionId: s.id, items, note: note || "", total: total(items), status, source: "qr", seen: false, createdAt: at };
+        m.orders[oid] = { id: oid, no: ++m.seq, tableId: tid, sessionId: s.id, items, note: note || "", name: (name || "").slice(0, 20), total: total(items), status, source: "qr", seen: false, createdAt: at };
         s.orderIds.push(oid);
       });
       return mem.orders[oid];

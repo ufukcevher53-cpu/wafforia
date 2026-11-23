@@ -149,13 +149,13 @@ textarea{width:100%;border:2px solid var(--line);border-radius:14px;padding:10px
 <div class="ov" id="status"><div id="stIcon"></div><h1 id="stTitle"></h1><p id="stText"></p><button class="btn" id="stNew">Yeni waffle oluştur</button><button class="btn light" id="stMine">Masa hesabını gör</button><div id="revSt"></div></div>
 <div class="toast" id="toast"></div>
 
-<script src="menu.js?v=11091528"></script><script src="store.js?v=11091528"></script><script src="nutrition.js?v=1"></script><script src="img/w/index.js?v=11211955"></script><script src="waffle.js?v=11211955"></script>
+<script src="menu.js?v=11091528"></script><script src="store.js?v=11231330"></script><script src="nutrition.js?v=1"></script><script src="img/w/index.js?v=11211955"></script><script src="waffle.js?v=11211955"></script>
 <script>
 const $ = id => document.getElementById(id);
 const P = new URLSearchParams(location.search);
 const TABLE = (P.get("masa") || "B1").toUpperCase();
 const STEPS = MENU.steps; const N = STEPS.length; // + özet
-let cur = 0, sel = {}, prevSel = {}, cart = [], teaQty = 0, lastOrderId = null, orderNote = "";
+let cur = 0, sel = {}, prevSel = {}, cart = [], teaQty = 0, lastOrderId = null, orderNote = "", orderName = (()=>{try{return localStorage.getItem("wf_name")||""}catch(_){return ""}})();
 const valid = MENU.tables.some(t => t.id === TABLE);
 const REV = MENU.brand.reviewUrl;
 function revCard(t, sub) { return `<a class="rev" href="${REV}" target="_blank" rel="noopener"><div class="g">G</div><div><b>${t}</b><span class="stars">★★★★★</span><br><small>${sub}</small></div><span class="go">Yorum yaz</span></a>`; }
@@ -220,9 +220,12 @@ function renderCart() {
   $("send").disabled = false;
   $("cartBody").innerHTML = cart.map((it, i) => `<div class="line"><div class="t"><span>${it.type === "waffle" ? "🧇" : "☕"} ${it.name}${it.qty > 1 ? " × " + it.qty : ""}</span><span>${tl(it.price * it.qty)}</span></div>${it.desc ? `<p>${it.desc}</p>` : ""}<button class="rm" data-rm="${i}">Kaldır</button></div>`).join("")
     + `<div class="tot"><span>Toplam</span><span>${tl(cart.reduce((a, i) => a + i.price * i.qty, 0))}</span></div>`
+    + `<label for="orderName" style="display:block;font-weight:900;font-size:14px;margin:10px 2px 6px">👤 İsminiz <small style="color:var(--muted);font-weight:700">(isteğe bağlı · masada siparişler karışmasın)</small></label>`
+    + `<input id="orderName" maxlength="20" autocomplete="given-name" placeholder="ör. Ayşe" value="${orderName.replace(/"/g,"&quot;")}" style="width:100%;box-sizing:border-box;border:1.5px solid var(--line,#ddd);border-radius:12px;padding:11px 12px;font:inherit;font-size:16px;margin-bottom:4px">`
     + `<label style="display:block;font-weight:900;font-size:14px;margin:10px 2px 6px">📝 Sipariş notu <small style="color:var(--muted);font-weight:700">(isteğe bağlı)</small></label>`
     + `<textarea id="orderNote" rows="2" placeholder="ör. Sos ayrı gelsin, çaylar waffle ile birlikte">${orderNote}</textarea>`;
   $("orderNote").oninput = e => orderNote = e.target.value;
+  $("orderName").oninput = e => { orderName = e.target.value; try { localStorage.setItem("wf_name", orderName.trim()); } catch (_) {} };
 }
 $("cartBody").addEventListener("click", e => { const b = e.target.closest("[data-rm]"); if (!b) return; cart.splice(+b.dataset.rm, 1); renderCart(); updCartBtn(); renderHome(); });
 $("cartBtn").onclick = () => { renderCart(); openSheet("cart"); };
@@ -230,7 +233,7 @@ $("moreW").onclick = () => { closeSheets(); openBuilder(); };
 $("send").onclick = () => {
   if (!cart.length) return;
   const items = cart.map(it => ({ type: it.type, name: it.name, price: it.price, qty: it.qty, desc: it.desc || "", detail: it.detail || null }));
-  const o = Store.placeOrder(TABLE, items, orderNote.trim()); lastOrderId = o.id; cart = []; orderNote = ""; updCartBtn(); renderHome(); closeSheets(); showStatus();
+  const o = Store.placeOrder(TABLE, items, orderNote.trim(), orderName.trim()); lastOrderId = o.id; cart = []; orderNote = ""; updCartBtn(); renderHome(); closeSheets(); showStatus();
 };
 function showStatus() {
   const o = Store.get().orders[lastOrderId]; if (!o) return; $("status").classList.add("on");
